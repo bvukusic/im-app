@@ -1,4 +1,9 @@
 React based chat application.
-Storage executed with firebase.
+* Registration with email and password
+* Storage implemented with firebase.
 
-![Snapshot](Snapshot.JPG)
+*Signup:*
+![Snapshot](Snapshot.png)
+
+*Chat:*
+![Snapshot](Snapshot2.png)
