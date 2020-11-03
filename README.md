@@ -1,3 +1,3 @@
 React based chat application.
 Storage executed with firebase.
-![Snapshot](Snapshot.jpg)
+![Snapshot](Snapshot.JPG)
