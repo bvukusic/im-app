@@ -14,8 +14,9 @@ const styles = theme => ({
       borderRadius: '0px'
     },
     unreadMessage: {
-      color: 'red',
+      color: 'light-gray',
       position: 'absolute',
+      marginTop: '3px',
       top: '0',
       right: '5px'
     }
