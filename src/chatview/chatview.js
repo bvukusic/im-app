@@ -15,7 +15,7 @@ class ChatViewComponent extends React.Component {
         
         const { classes, chat, user } = this.props;
 
-        if (chat === undefined) {
+        if (!chat) {
           return(<main id='chatview-container' className={classes.content}></main>)
         } else {
             return(
