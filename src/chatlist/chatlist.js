@@ -22,11 +22,7 @@ class ChatListComponent extends React.Component {
         if(this.props.chats.length > 0) {
             return (
                 <main className={classes.root}>
-                    <Button variant='contained'
-                        fullWidth
-                        color='primary'
-                        className={classes.newChatBtn}
-                        onClick={this.newChat}>New Chat</Button>
+                    <Button variant='contained' fullWidth color='primary' className={classes.newChatBtn} onClick={this.newChat}>New Chat</Button>
                     <List>
                         {
                             this.props.chats.map((_chat, _index) => {
@@ -37,24 +33,16 @@ class ChatListComponent extends React.Component {
                                             selected={this.props.selectedChatIndex === _index}
                                             alignItems='flex-start'>
                                             <ListItemAvatar>
-                                                <Avatar alt='Remy Sharp'>{_chat.users.filter(_user => _user !== this.props.userEmail)[0].split('')[0]}</Avatar>
+                                                <Avatar alt='Remy Sharp'>{_chat.users.find(_user => _user !== this.props.userEmail).split('')[0]}</Avatar>
                                             </ListItemAvatar>
-                                            <ListItemText primary={_chat.users.filter(_user => _user !== this.props.userEmail)[0]}
-                                                secondary={
-                                                    <React.Fragment>
+                                            <ListItemText primary={_chat.users.find(_user => _user !== this.props.userEmail)}
+                                                secondary={ 
                                                         <Typography component='span' color='textPrimary'>
                                                             { _chat.messages[_chat.messages.length - 1].message.substring(0, 30) }
                                                         </Typography>
-                                                    </React.Fragment>
                                                 }>
-    
                                             </ListItemText>
-                                            {
-                                                _chat.receiverHasRead === false && !this.userIsSender(_chat) ?
-                                                <ListItemIcon>
-                                                    <NotificationImportant className={classes.unreadMessage} />
-                                                </ListItemIcon> : null
-                                            }
+                                            {this.displayUnreadMessageAlert(_chat)}                                            
                                         </ListItem>
                                         <Divider></Divider>
                                     </div>
@@ -86,6 +74,15 @@ class ChatListComponent extends React.Component {
     }
 
     userIsSender = (chat) => chat.messages[chat.messages.length - 1].sender === this.props.userEmail;
+
+    displayUnreadMessageAlert = (chat) => {
+        if (chat.receiverHasRead === false && !this.userIsSender(chat)) 
+        return (
+        <ListItemIcon>
+            <NotificationImportant className={this.props.classes.unreadMessage} />
+        </ListItemIcon>) 
+        else return null
+    }
 }
 
 export default withStyles(styles)(ChatListComponent);

@@ -19,6 +19,10 @@ class DashboardComponent extends React.Component {
         };
     }
 
+    componentDidMount = () => {
+        this.fetchUserChatCollection();
+    }
+
     render() {
         
         const { classes } = this.props;
@@ -31,25 +35,50 @@ class DashboardComponent extends React.Component {
             chats={this.state.chats}
             userEmail={this.state.email}
             selectedChatIndex={this.state.selectedChat}></ChatListComponent>
-            {
-                this.state.newChatFormVisible ? 
-                null : <ChatViewComponent 
-                        user={this.state.email}
-                        chat={this.state.chats[this.state.selectedChat]} />
-            }
-            {
-                this.state.selectedChat !== null && !this.state.newChatFormVisible ? 
-                <ChatTextBoxComponent messageReadFn={this.messageRead} submitMessageFn={this.submitMessage} /> :
-                null
-            }
-            {
-                this.state.newChatFormVisible ? <NewChatComponent goToChatFn={this.goToChat} newChatSubmitFn={this.newChatSubmit}/> : null
-            }
-            <Button fullWidth 
-                onClick={this.signOut}
-                className={classes.signOutBtn}>Sign Out</Button>
+            
+            {this.renderChatViewComponent()}
+            {this.renderChatBoxComponent()}
+            {this.renderNewChatComponent()}
+            
+            <Button fullWidth onClick={this.signOut} className={classes.signOutBtn}>Sign Out</Button>
         </div>
         );
+    }
+
+    fetchUserChatCollection = () => {
+        firebase.auth().onAuthStateChanged(async _usr => {
+            if(!_usr)
+                this.props.history.push('/login');
+            else {
+                await firebase
+                    .firestore().collection('chats')
+                    .where('users', 'array-contains', _usr.email)
+                    .onSnapshot(async res => {
+                        const chats = res.docs.map(_doc => _doc.data());
+                        //setState is asynchronous
+                        await this.setState({ email: _usr.email, chats: chats });
+                        console.log(this.state, "Email: " + _usr.email);
+                    })
+            }
+        })
+    }
+
+    renderChatViewComponent = () => {
+        if (this.state.newChatFormVisible)
+        return null 
+        else return (<ChatViewComponent user={this.state.email} chat={this.state.chats[this.state.selectedChat]} />)
+    }
+
+    renderChatBoxComponent = () => {
+        if(this.state.selectedChat !== null && !this.state.newChatFormVisible) 
+        return (<ChatTextBoxComponent messageReadFn={this.messageRead} submitMessageFn={this.submitMessage} />)
+        else return null
+    }
+
+    renderNewChatComponent = () => {
+        if (this.state.newChatFormVisible) 
+        return (<NewChatComponent goToChatFn={this.goToChat} newChatSubmitFn={this.newChatSubmit}/>) 
+        else return null
     }
 
     signOut = () => firebase.auth().signOut();
@@ -65,12 +94,11 @@ class DashboardComponent extends React.Component {
                                                 .messages[this.state.chats[chatIndex].messages.length -1].sender !== this.state.email;
 
     messageRead = () => {
-        const docKey = this.buildDocKey(this.state.chats[this.state.selectedChat].users.filter(_usr => _usr !== this.state.email)[0]);
-        if(this.clickedChatWhereNotSender(this.state.selectedChat)) {
+        const docKeySlot = this.state.chats[this.state.selectedChat].users.filter(_usr => _usr !== this.state.email);
+        let docKey = "";
+        if(docKeySlot.length !== 0) docKey = this.buildDocKey(this.state.chats[this.state.selectedChat].users.find(_usr => _usr !== this.state.email));
+        if(this.clickedChatWhereNotSender(this.state.selectedChat))
             firebase.firestore().collection('chats').doc(docKey).update({ receiverHasRead: true })
-        } else {
-            console.log('Clicked msg where the user was the sender!!!');
-        }
     }
 
     goToChat = async (docKey, msg) => {
@@ -96,8 +124,7 @@ class DashboardComponent extends React.Component {
     }
 
     submitMessage = (msg) => {
-        const docKey = this.buildDocKey(this.state.chats[this.state.selectedChat]
-            .users.filter(_usr => _usr !== this.state.email)[0]);
+        const docKey = this.buildDocKey(this.state.chats[this.state.selectedChat].users.find(_usr => _usr !== this.state.email));
         console.log(docKey);
         firebase
             .firestore()
@@ -115,27 +142,6 @@ class DashboardComponent extends React.Component {
 
     buildDocKey = (friend) => [this.state.email, friend].sort().join(':');
 
-    componentDidMount = () => {
-        firebase.auth().onAuthStateChanged(async _usr => {
-            if(!_usr)
-                this.props.history.push('/login');
-            else {
-                await firebase
-                    .firestore()
-                    .collection('chats')
-                    .where('users', 'array-contains', _usr.email)
-                    .onSnapshot(async res => {
-                        const chats = res.docs.map(_doc => _doc.data());
-                        //setState is asynchronous
-                        await this.setState({
-                            email: _usr.email,
-                            chats: chats
-                        });
-                        console.log(this.state, "Email: " + _usr.email);
-                    })
-            }
-        })
-    }
 
 }
 

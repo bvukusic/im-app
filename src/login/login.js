@@ -30,9 +30,7 @@ class LoginComponent extends React.Component {
             <main className={classes.main}>
                 <CssBaseline></CssBaseline>
                 <Paper className={classes.paper}>
-                    <Typography component='h1' variant='h5'>
-                        Log In!
-                    </Typography>
+                    <Typography component='h1' variant='h5'>Log In!</Typography>
                     <form className={classes.form} onSubmit={(e) => this.submitLogin(e)}>
                         <FormControl required fullWidth margin='normal'>
                             <InputLabel htmlFor='login-email-input'>Enter Your Email</InputLabel>
@@ -44,11 +42,7 @@ class LoginComponent extends React.Component {
                         </FormControl>
                         <Button type='submit' fullWidth variant='contained' color='primary' className={classes.submit}>Log In!</Button>
                     </form>
-                    {
-                        this.state.loginError ?
-                        <Typography className={classes.errorText} component='h5' variant='h6'>Incorrect Login Information!</Typography> :
-                        null
-                    }
+                    { this.displayErrorMessage() }
                     <Typography component='h5' variant='h6' className={classes.noAccountHeader}>Don't Have An Account?</Typography>
                     <Link className={classes.signUpLink} to='/signup' >Sign Up!</Link>
                 </Paper>
@@ -73,8 +67,7 @@ class LoginComponent extends React.Component {
 
     submitLogin = (e) => {
         e.preventDefault();
-        
-        
+
         firebase
             .auth()
             .signInWithEmailAndPassword(this.state.email, this.state.password)
@@ -84,6 +77,12 @@ class LoginComponent extends React.Component {
                 this.setState({ loginError: 'Server error' });
                 console.log(err, this.state);
             });
+    }
+
+    displayErrorMessage = () => {
+        if(this.state.loginError)
+        return(<Typography className={this.props.classes.errorText} component='h5' variant='h6'>Incorrect Login Information!</Typography>)
+        else return null
     }
 
 }

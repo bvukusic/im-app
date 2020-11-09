@@ -11,14 +11,6 @@ const firebase = require("firebase");
 require("firebase/firestore");
 
 firebase.initializeApp({
-    apiKey: "AIzaSyDXXN1lMvxze7EvpEHryTX3TXAzvldQQTw",
-    authDomain: "im-app-c5bec.firebaseapp.com",
-    databaseURL: "https://im-app-c5bec.firebaseio.com",
-    projectId: "im-app-c5bec",
-    storageBucket: "im-app-c5bec.appspot.com",
-    messagingSenderId: "346116646069",
-    appId: "1:346116646069:web:b65b9dda41fc54de318afc",
-    measurementId: "G-KF5ELCK0FX"
 
 });
 

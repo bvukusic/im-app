@@ -20,10 +20,10 @@ class ChatTextBoxComponent extends React.Component {
         return(
         <div className={classes.chatTextBoxContainer}>
             <TextField placeholder='Type your message...'
-            onKeyUp={(e) => this.userTyping(e)}
-            id='chattextbox'
-            className={classes.chatTextBox}
-            onFocus={this.userClickedInput}></TextField>
+                onKeyUp={(e) => this.userTyping(e)}
+                id='chattextbox'
+                className={classes.chatTextBox}
+                onFocus={this.props.messageReadFn} />
             <Send onClick={this.submitMessage} className={classes.sendBtn}></Send>
         </div>
         );
@@ -32,8 +32,6 @@ class ChatTextBoxComponent extends React.Component {
     userTyping = (e) => e.keyCode === 13 ? this.submitMessage() : this.setState({ chatText: e.target.value });
 
     messageValid = (txt) => txt && txt.replace(/\s/g, '').length; 
-
-    userClickedInput = () => this.props.messageReadFn();
 
     submitMessage = () => {
         if(this.messageValid(this.state.chatText)) {

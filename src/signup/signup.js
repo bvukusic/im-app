@@ -50,15 +50,7 @@ class SignupComponent extends React.Component {
                     </FormControl>
                     <Button type='submit' fullWidth variant='contained' color='primary' className={classes.submit}>Submit</Button>
                 </form>
-
-                {
-                    this.state.signupError ? 
-                    <Typography className={classes.errorText} component='h5' variant='h6'>
-                        {this.state.signupError}
-                    </Typography> :
-                    null
-                }
-
+                { this.displayErrorMessage() }
                 <Typography component='h5' variant='h6' className={classes.hasAccountHeader}>Already have an account?</Typography>
                 <Link className={classes.logInLink} to='/login'>Log in!</Link>
             </Paper>
@@ -119,6 +111,16 @@ class SignupComponent extends React.Component {
     }
 
     formIsValid = () => this.state.password === this.state.passwordConfirmation;
+
+    displayErrorMessage = () => {
+        if (this.state.signupError)
+        return( 
+        <Typography className={this.props.classes.errorText} component='h5' variant='h6'>
+            {this.state.signupError}
+        </Typography>
+        )
+        else return null
+    }
 
 }
 
